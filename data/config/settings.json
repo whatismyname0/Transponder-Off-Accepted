@@ -1,0 +1,7 @@
+{
+  "TOffAccStipendRatio": 0.5,
+  "TOffAccCancelReputationDecreaseRatio": 0.4,
+
+  "TOffAccLeastRevokeReputation": "friendly",
+  "TOffAccLeastReputation": "cooperative"
+}

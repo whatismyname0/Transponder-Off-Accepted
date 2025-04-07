@@ -1,0 +1,10 @@
+{
+	"id":"transponder_off_accepted",
+	"name":"应答器关闭许可",
+	"version":"1.2.4",
+	"description":"可向友好势力提出在其控制的空域中不开启应答器的请求",
+	"gameVersion":"0.98a",
+	"author":"Nitori_Tachyon",
+	"modPlugin":"data.TransponderOffAcceptedPlugin",
+	"jars":["jars/TransponderOffAccepted.jar"]
+}

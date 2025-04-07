@@ -1,0 +1,229 @@
+id,trigger,conditions,script,text,options,notes
+#Apply for transponder-off permission,,,,,,
+TOffAcc_AskForTOffAccOpt,PopulateOptions,"$isPerson
+TOffAcc personCanGiveTOffAcc
+!TOffAcc hasFactionTOffAcc
+!$faction.TOffAcc_Unavailable",,,"20:TOffAcc_askForTOffAcc:""我想申请 $theFaction 的特别舰队备案""",
+TOffAcc_RegisnTOffAccOpt,PopulateOptions,"$isPerson
+TOffAcc personCanGiveTOffAcc
+TOffAcc hasFactionTOffAcc
+!$faction.TOffAcc_Unavailable",,,"20:TOffAcc_ResignTOffAcc:""我想撤销 $theFaction 的特别舰队备案""",
+TOffAcc_HostileNo,DialogOptionSelected,"$option == TOffAcc_askForTOffAcc
+$faction.isHostile score:100","SetEnabled TOffAcc_AskForTOffAcc false
+FireBest TOffAccTextRejectHostile",,,
+TOffAcc_doesNotMeetCriteria,DialogOptionSelected,"$option == TOffAcc_askForTOffAcc
+!TOffAcc playerMeetsCriteria","SetEnabled TOffAcc_AskForTOffAcc false
+FireBest TOffAccTextUnsuited
+TOffAcc printRequirements",,,
+TOffAcc_meetsCriteria,DialogOptionSelected,"$option == TOffAcc_askForTOffAcc
+TOffAcc playerMeetsCriteria",FireBest TOffAccTextSuitedPart1,,0:TOffAcc_continueMeetsReq:继续,
+TOffAcc_meetsCriteria2,DialogOptionSelected,$option == TOffAcc_continueMeetsReq,"TOffAcc printInfo
+FireBest TOffAccTextSuitedPart2",,"0:TOffAcc_accept:确认申请 $faction 的特别舰队备案
+1:TOffAcc_cancel:""我可能还没有完全做好准备。""",
+TOffAcc_accept,DialogOptionSelected,$option == TOffAcc_accept,"FireBest TOffAccTextWelcomePart1
+TOffAcc accept
+TOffAcc_AddTOffPermissionFaction
+FireBest TOffAccTextWelcomePart2
+FireAll PopulateOptions",,,
+TOffAcc_cancel,DialogOptionSelected,$option == TOffAcc_cancel,"FireBest TOffAccTextChangeMind
+FireAll PopulateOptions",,,
+TOffAcc_resignShowOptions,DialogOptionSelected,$option == TOffAcc_ResignTOffAcc,FireBest TOffAccResignAskToConfirm,,"0:TOffAcc_resignConfirm:""是的，我确定。""
+1:TOffAcc_resignCancel:""抱歉，我得再考虑一下。""",
+TOffAcc_resignConfirm,DialogOptionSelected,$option == TOffAcc_resignConfirm,"FireBest TOffAccResignConfirmed
+TOffAcc resign
+TOffAcc_RemoveTOffPermissionFaction
+FireAll PopulateOptions",,,
+TOffAcc_resignCancel,DialogOptionSelected,$option == TOffAcc_resignCancel,"FireBest TOffAccResignCancelled
+FireAll PopulateOptions",,,
+,,,,,,
+#Default text,,,,,,
+TOffAccTextRejectHostile_default,TOffAccTextRejectHostile,,,"""这是在开玩笑吗？如果你真的是那个人，那么你已被列在好几份 $faction 的通缉名单上了！""",,
+TOffAccTextUnsuited_default,TOffAccTextUnsuited,,,"""很抱歉，你不符合我们的特别舰队备案标准。""",,
+TOffAccTextSuitedPart1_default,TOffAccTextSuitedPart1,,,"""嗯，好的。你的确是个合适的人选。
+
+但成为 $theFaction 的特别舰队是个非常重大的决定。这意味着你虽然无义务与 $theFaction 的敌人作战，但必须接受 $theFaction 随时可能向你发布的任务并尽力完成。
+
+你也可随时撤销这一备案，但这样做绝不会让你赢得任何朋友。""",,
+TOffAccTextSuitedPart2_default,TOffAccTextSuitedPart2,,,"""那么，怎么样？还想备案吗？""",,
+TOffAccTextWelcomePart1_default,TOffAccTextWelcomePart1,,,"""太好了，我们很期待你的表现！""",,
+TOffAccTextWelcomePart2_default,TOffAccTextWelcomePart2,,,"""我还能为您做些什么？""",,
+TOffAccTextChangeMind_default,TOffAccTextChangeMind,,,"""好吧，并不是所有人都有决心作为 $theFaction 在暗处的利剑。
+
+那么，我还能为你做些什么？""",,
+TOffAccResignAskToConfirm_default,TOffAccResignAskToConfirm,,,"""你确定吗？$theFaction 信赖可靠的人。特殊舰队的职责固然沉重，但我相信你一定能够继续肩负。""",,
+TOffAccResignConfirmed_default,TOffAccResignConfirmed,,,"""看来你是拿定主意了。行，至少你还是有礼貌地亲自告知我们你放弃了。""",,
+TOffAccResignCancelled_default,TOffAccResignCancelled,,,"""明智的决定。你这种人值得为我们继续效力。""",,
+TOffAccDock_default,MarketPostOpen,"$hasMarket
+!$player.transponderOn
+!$faction.c:allowsTransponderOffTrade
+$faction.TOffAcc_factionAllowPlayerTOff score:100","$tradeMode = OPEN 0
+FireBest MarketPostDock","你的$shipOrFleet进入了环绕 $marketName 的轨道。
+
+你并未开启应答器，但当地海关从数据库中调取到的数据表明你的舰队并不简单，于是当地官员麻利地为你办好了各项手续，顺便把你的入港顺位调到了最高优先级。",,
+greetingTOffSpecial_default,OpenCommLink,"!$player.transponderOn
+$faction.TOffAcc_factionAllowPlayerTOff score:100",,"$PersonRank $personName 叹了一口气，对你说：""虽然我知道你们的特殊身份，但是因为通讯链接记录规定，你还是打开应答器吧。""","turnOnTransponder:开启你的应答器
+cutCommLink:切断通讯链接",
+,,,,,,
+#luddic church,,,,,,
+TOffAccTextRejectHostile_luddic_church,TOffAccTextRejectHostile,$faction.id == luddic_church,,"""这是在开玩笑吗？假使你的身份真的如你所言，那么来自至圣长老们的多份圣令已经定罪于你了。""",,
+TOffAccTextUnsuited_luddic_church,TOffAccTextUnsuited,$faction.id == luddic_church,,"""很抱歉，你还无法承担作为""袖剑""的责任。""",,
+TOffAccTextSuitedPart1_luddic_church,TOffAccTextSuitedPart1,$faction.id == luddic_church,,"""嗯，是的，你已经用善行证明了你的信仰。
+
+成为""袖剑""是一件重大的决定。十一条人伦美德的践行同样需要在潜藏在暗处的虔信者们悄无声息地掐灭罪恶的萌芽。""袖剑""有权利不直接加入教会与黑暗的斗争，然而，每当教会直接向他们下达圣令，""袖剑""就有义务尽全力完成。
+
+你随时可以除去""袖剑""的身份，卢德的信徒虽不会把这视为你身上无法洗刷的污点，但这也会对你的世俗事务带来一些影响。""",,
+TOffAccTextSuitedPart2_luddic_church,TOffAccTextSuitedPart2,$faction.id == luddic_church,,"""你愿意接受卢德的祝福，承担行使正义的责任吗？""",,
+TOffAccTextWelcomePart1_luddic_church,TOffAccTextWelcomePart1,$faction.id == luddic_church,,"""赞美群星之灵！让我能有幸能成为首个欢迎你跻身于正义修业的人。""",,
+TOffAccTextWelcomePart2_luddic_church,TOffAccTextWelcomePart2,$faction.id == luddic_church,,"""我不会耽搁你的圣务。但凡你需要我提供协助，还请直言，不要有所顾虑。""",,
+TOffAccTextChangeMind_luddic_church,TOffAccTextChangeMind,$faction.id == luddic_church,,"""诚然，这并不是每个人必经的修业之道，就算是最为虔诚的信徒，也不一定有勇气或有能力成为""袖剑""的一员。圣神卢德会为我们每一个卑微的灵魂都赋予他神圣的爱，不要为你追寻它的道路不比他人更加辉煌而感到羞耻。
+
+让我们暂时抛开荣光与悔恨，看看现在我还能在其他方面帮上你什么吗？""",,
+TOffAccResignAskToConfirm_luddic_church,TOffAccResignAskToConfirm,$faction.id == luddic_church,,"""你确定么，地球的子民？依我看来，圣神卢德在你的道路上布下的险阻，不会如此轻易地叫你屈服。你的灵魂定将在这条命定之路上得到升华。这条路固然荆棘密布，但卢德在上，你一定能够以最坚定的信仰不断跋涉，直到救赎之日。""",,
+TOffAccResignConfirmed_luddic_church,TOffAccResignConfirmed,$faction.id == luddic_church,,"""我看得出，你去意已决。在你今后的道路上还请小心谨慎。但还请不要忘记，在最终之日来临时，你也能享有卢德神圣的关爱。""",,
+TOffAccResignCancelled_luddic_church,TOffAccResignCancelled,$faction.id == luddic_church,,"""明智的抉择。在履行圣务时，我们的灵魂时常会受到考验，我们的信念不时会发生动摇。但请谨记，正义之道永远被卢德的光辉所照耀，无论它在艰难苦困之中显得多么暗淡。""",,
+TOffAccDock_luddic_church,MarketPostOpen,"$hasMarket
+!$player.transponderOn
+!$faction.c:allowsTransponderOffTrade
+$faction.TOffAcc_factionAllowPlayerTOff score:100
+$faction.id == luddic_church","$tradeMode = OPEN 0
+FireBest MarketPostDock","你的$shipOrFleet进入了环绕 $marketName 的轨道。
+
+你并未开启应答器，但当地教会认出你的舰队隶属于""袖剑""，于是当地官员麻利地为你办好了各项手续，顺便把你的入港顺位调到了最高优先级。",,
+greetingTOffSpecial_luddic_church,OpenCommLink,"!$player.transponderOn
+$faction.TOffAcc_factionAllowPlayerTOff score:100
+$faction.id == luddic_church",,"$PersonRank $personName 叹了一口气，对你说：""虽然我知道你们是""袖剑""，但是因为教会的通讯规定，你还是打开应答器吧。""","turnOnTransponder:开启你的应答器
+cutCommLink:切断通讯链接",
+,,,,,,
+#hegemony,,,,,,
+TOffAccTextRejectHostile_hegemony,TOffAccTextRejectHostile,$faction.id == hegemony,,"""你这是在开玩笑吗，公民？如果你是你所声称的人，那么你已经被列入好几个顶级部委的通缉名单了。说实话，我现在不得不向霸主 COMSEC 上报这整个对话。""",,
+TOffAccTextUnsuited_hegemony,TOffAccTextUnsuited,$faction.id == hegemony,,"""你不符合加入 霸主编外特种舰队 的标准，公民。""",,
+TOffAccTextSuitedPart1_hegemony,TOffAccTextSuitedPart1,$faction.id == hegemony,,"""嗯，舰队情报部似乎已经观察你有一段时间了，这里说你通过了审查。
+
+成为 霸主编外特种舰队 的一员是一件很严肃的事情，公民。你不必直接与 霸主 的敌人作战，你更重要的使命是在全人类的宇宙空间中，从星云中、从小行星团中、从超空间风暴中打击人之领之敌的后背。当最高霸主直接向你下达命令，你必须不惜任何代价保证任务的成功完成。
+
+你有权在任何时候离开特种舰队。这并非一件可耻的事，与辞去 霸主 的正规军官职务不同，离开特种舰队一般不被认为是对人之领信条的背弃。""",,
+TOffAccTextSuitedPart2_hegemony,TOffAccTextSuitedPart2,$faction.id == hegemony,,"""根据至高霸主的授权，我向你提出委任令，备案你舰队作为 霸主编外特种舰队 的一员。你愿意签约吗？""",,
+TOffAccTextWelcomePart1_hegemony,TOffAccTextWelcomePart1,$faction.id == hegemony,,"""很好，欢迎加入！""",,
+TOffAccTextWelcomePart2_hegemony,TOffAccTextWelcomePart2,$faction.id == hegemony,,"""那么，我还能为你做些什么，公民？""",,
+TOffAccTextChangeMind_hegemony,TOffAccTextChangeMind,$faction.id == hegemony,,"""的确，不是每个人都能有坚强的人格。作为 霸主编外特种舰队 的一员，就像无止尽地呆在相位空间里一样，这需要极端坚定的斗志。毕竟，这个星域也需要商人和穿梭机驾驶员。在他们自己的小圈子里，那也是很光荣的职业。
+
+还有什么我可以为你做的吗？""",,
+TOffAccResignAskToConfirm_hegemony,TOffAccResignAskToConfirm,$faction.id == hegemony,,"""你确认吗，公民？确认就意味着你同意将这个经历作为你档案的一部分被记录下来。""",,
+TOffAccResignConfirmed_hegemony,TOffAccResignConfirmed,$faction.id == hegemony,,"""看来你是拿定主意了。行，至少你还是有礼貌地亲自告知我们你放弃了。""",,
+TOffAccResignCancelled_hegemony,TOffAccResignCancelled,$faction.id == hegemony,,"""很好。和不同政见者所宣传的不同，霸主 并不需要盲从。提出质疑，然后再次坚定自己可以肩负身上的义务，这很需要勇气。在这个混乱的时代里，我们需要像你这样的人效力。""",,
+TOffAccDock_hegemony,MarketPostOpen,"$hasMarket
+!$player.transponderOn
+!$faction.c:allowsTransponderOffTrade
+$faction.TOffAcc_factionAllowPlayerTOff score:100
+$faction.id == hegemony","$tradeMode = OPEN 0
+FireBest MarketPostDock","你的$shipOrFleet进入了环绕 $marketName 的轨道。
+
+你并未开启应答器，但当地海关认出你的舰队隶属于 霸主编外特种舰队，于是当地官员麻利地为你办好了各项手续，顺便把你的入港顺位调到了最高优先级。",,
+greetingTOffSpecial_hegemony,OpenCommLink,"!$player.transponderOn
+$faction.TOffAcc_factionAllowPlayerTOff score:100
+$faction.id == hegemony",,"$PersonRank $personName 叹了一口气，对你说：""虽然我知道你们是 霸主编外特种舰队 的一员，但是因为 COMSEC 的通讯规定，你还是打开应答器吧。""","turnOnTransponder:开启你的应答器
+cutCommLink:切断通讯链接",
+,,,,,,
+#tritachyon,,,,,,
+TOffAccTextRejectHostile_tritachyon,TOffAccTextRejectHostile,$faction.id == tritachyon,,"""我很惊讶，您居然还敢发起通讯。因为您造成的损害，光是一份您准确无误的全息照片，都有不少高层主管私下出钱要收。这样看来，不是所有的仇恨都是能够用钱买通的。现在我给您提个免费的建议：立即紧急加速逃离这片宙域。""",,
+TOffAccTextUnsuited_tritachyon,TOffAccTextUnsuited,$faction.id == tritachyon,,"""我们的人力资源部门报告说，您的舰队当前恐怕还不符合我们对 外包资产特别安保舰队 的预期标准。""",,
+TOffAccTextSuitedPart1_tritachyon,TOffAccTextSuitedPart1,$faction.id == tritachyon,,"""嗯，是的，您的简历令人印象深刻。我们人力资源部已经关注您有好一段时间了。
+
+现在还请您明白，与速子科技公司 (以及相关的附属公司) 签署这份 特别安保舰队 外包合同是一件非常严肃的承诺。你需要在公司要求你执行某项任务（""任务""的定义见合同条款）时自担损失风险，无论敌方是海盗、反市场主义鼓吹者，还是实行非法搜查并扣押公司财产的各种国家级实体。若你拒绝执行公司分派的任务，你须承担合同规定的违约责任，并且公司将会将此事件记录到你的档案中。
+
+您可以在任何时候终止合同，且不会受到经济方面的处罚。在我看来，这的已经是很宽厚的条款了。但如果您这样做，那就意味着您将...怎么说呢，被扔到鲨鱼堆里了？我的朋友，由于公司的内部竞争异常激烈，一旦您主动放弃了公司给予的法律保护，那么我们就不会对之后发生的任何事情负责。""",,
+TOffAccTextSuitedPart2_tritachyon,TOffAccTextSuitedPart2,$faction.id == tritachyon,,"""那还想签约吗？签的话就在刚出现在您 TriPad 上的通知上按一下指纹就可以了。""",,
+TOffAccTextWelcomePart1_tritachyon,TOffAccTextWelcomePart1,$faction.id == tritachyon,,"""太好了！我很荣幸能成为第一个祝贺您与我司签约的人。
+
+还有，啊，您介意我在 TriLink 上添加您为好友吗？我一直在寻求和像您这些有潜力的舰长多交流联系。""",,
+TOffAccTextWelcomePart2_tritachyon,TOffAccTextWelcomePart2,$faction.id == tritachyon,,"""我现在还能为您做些什么吗，我们重要的承包商？""",,
+TOffAccTextChangeMind_tritachyon,TOffAccTextChangeMind,$faction.id == tritachyon,,"""啊，您这是在货比三家，看谁开出条件最好。说中了吧？真明智。哦还有，刚才我们所讨论的细节自然都受标准的速子公司保密协议所保护。
+
+那今天还有什么我可以为您效劳的吗？""",,
+TOffAccResignAskToConfirm_tritachyon,TOffAccResignAskToConfirm,$faction.id == tritachyon,,"""您确定吗？您将会错过推动您事业发展的绝佳机会，而且公司也更看重那些懂得自我激励的人。还有我提醒您，公司里有些人可能会因此觉得您...很好欺负。""",,
+TOffAccResignConfirmed_tritachyon,TOffAccResignConfirmed,$faction.id == tritachyon,,"""看来我是没法挽留您了。有人给了您开出了更好的价码，对吧？不，不用说了，我都懂。
+
+如果他们给的薪水真的那么高，到时候要是还有空缺，就别忘了我。""",,
+TOffAccResignCancelled_tritachyon,TOffAccResignCancelled,$faction.id == tritachyon,,"""明智的选择。速子科技 尊重每一位重要的承包商想通过谈判来获得更优渥条件的意愿。""",,
+TOffAccDock_tritachyon,MarketPostOpen,"$hasMarket
+!$player.transponderOn
+!$faction.c:allowsTransponderOffTrade
+$faction.TOffAcc_factionAllowPlayerTOff score:100
+$faction.id == tritachyon","$tradeMode = OPEN 0
+FireBest MarketPostDock","你的$shipOrFleet进入了环绕 $marketName 的轨道。
+
+你并未开启应答器，但当地公司物流部认出你的舰队是公司的一支 外包资产特别安保舰队，于是当地管理人员麻利地为你办好了各项手续，顺便把你的入港顺位调到了最高优先级。",,
+greetingTOffSpecial_tritachyon,OpenCommLink,"!$player.transponderOn
+$faction.TOffAcc_factionAllowPlayerTOff score:100
+$faction.id == tritachyon",,"$PersonRank $personName 叹了一口气，对你说：""虽然我知道你们是一支 外包资产特别安保舰队，但是因为公司的通讯规定，你还是打开应答器吧。""","turnOnTransponder:开启你的应答器
+cutCommLink:切断通讯链接",
+,,,,,,
+#persean,,,,,,
+TOffAccTextRejectHostile_persean,TOffAccTextRejectHostile,$faction.id == persean,,"""这是在开玩笑吧？能让 联盟 各星球一致同意的事情不多，但你作为全星域的威胁就是其中之一。我绝对会提醒联合舰队情报部注意这次联络的。""",,
+TOffAccTextUnsuited_persean,TOffAccTextUnsuited,$faction.id == persean,,"""我很抱歉，但这边说你不符合我们的选拔标准。我们只认可那些在维护联盟利益和价值观方面有良好记录的人加入 联盟辅助舰队。""",,
+TOffAccTextSuitedPart1_persean,TOffAccTextSuitedPart1,$faction.id == persean,,"""嗯，是的，你的声望良好，联盟 世界数据库中没有人对你进行一票否决。
+
+加入 英仙座联盟辅助舰队 是一件严肃的事情。这意味着你必须学习并遵守 [联盟宪章] 的八项规定。你将投身于建设人类崭新的未来，让全人类免于遭受任何集权政体的统治，并促进彼此间携手互助，互利共赢。这是崇高的理想，我的朋友，也是值得付之于终身奋斗的理想。作为辅助舰队一员的意义并不在于直面强权们的无敌舰队，不，不，在他们庞大战舰无法察觉的暗处，你们能发挥更大的作用。一旦委员会直接向你下令，即使需要舍弃一切，献身于我们的伟大愿景，你也必须成功完成命令。
+
+依照正式流程，我必须告知你，你有权在任何时候撤除 联盟辅助舰队 的身份。这是很常见的事，联盟不会为难你。""",,
+TOffAccTextSuitedPart2_persean,TOffAccTextSuitedPart2,$faction.id == persean,,"""那么，考虑好了吗？关于八项要求的测试实际上只是走个形式。你确定接受签约吗？""",,
+TOffAccTextWelcomePart1_persean,TOffAccTextWelcomePart1,$faction.id == persean,,"""太好了，我谨代表星域内的自由星球，欢迎你加入 联盟辅助舰队。""",,
+TOffAccTextWelcomePart2_persean,TOffAccTextWelcomePart2,$faction.id == persean,,"""我还能为你做些什么？""",,
+TOffAccTextChangeMind_persean,TOffAccTextChangeMind,$faction.id == persean,,"""好的，我能理解。这份工作不但充满危险，还需要有非凡的品格来坚定贯彻联盟的理想。拒绝这份承诺并不可耻，毕竟我们坚持奋战的目标就是你在此时此刻能自由地做出选择。
+
+那么，我还能为你做些什么？""",,
+TOffAccResignAskToConfirm_persean,TOffAccResignAskToConfirm,$faction.id == persean,,"""你确定么？联盟 需要你这样可靠的人来维护我们的准则。尽管你现在可以行使你的权力，选择离开。但 联盟 里那些不这么宽宏大量的成员可能对这种行为有所猜疑。""",,
+TOffAccResignConfirmed_persean,TOffAccResignConfirmed,$faction.id == persean,,"""看来你已经下定决心了。我谨代表 联盟 感谢你至今所做出的贡献，以及你亲自提交申请时的礼貌。
+
+现在，如果你不介意的话，我需要填写一些表格来落实这个程序。""",,
+TOffAccResignCancelled_persean,TOffAccResignCancelled,$faction.id == persean,,"""很高兴你改变主意了，联盟 需要像你这样的人继续效力。""",,
+TOffAccDock_persean,MarketPostOpen,"$hasMarket
+!$player.transponderOn
+!$faction.c:allowsTransponderOffTrade
+$faction.TOffAcc_factionAllowPlayerTOff score:100
+$faction.id == persean","$tradeMode = OPEN 0
+FireBest MarketPostDock","你的$shipOrFleet进入了环绕 $marketName 的轨道。
+
+你并未开启应答器，但当地官员认出你的舰队隶属于 联盟辅助舰队，于是当地官员麻利地为你办好了各项手续，顺便把你的入港顺位调到了最高优先级。",,
+greetingTOffSpecial_persean,OpenCommLink,"!$player.transponderOn
+$faction.TOffAcc_factionAllowPlayerTOff score:100
+$faction.id == persean",,"$PersonRank $personName 叹了一口气，对你说：""虽然我知道你们属于 联盟辅助舰队，但是因为 联盟 的通讯规定，你还是打开应答器吧。""","turnOnTransponder:开启你的应答器
+cutCommLink:切断通讯链接",
+,,,,,,
+#sindrian_diktat,,,,,,
+TOffAccTextRejectHostile_sindrian_diktat,TOffAccTextRejectHostile,$faction.id == sindrian_diktat,,"""这是在开玩笑吗？如果你是你说的那个恐怖分子，这里正好就有一份由狮心统帅亲自签署的处决令要交给你。现在我必须立即向我的上级汇报这次通讯。""",,
+TOffAccTextUnsuited_sindrian_diktat,TOffAccTextUnsuited,$faction.id == sindrian_diktat,,"""你的舰队不符合 辛达强权编外特种舰队 的标准，我们只接受能证明自己实力的候选人。而且候选人必须满怀热忱地加入上将同志所领导的伟大斗争运动。""",,
+TOffAccTextSuitedPart1_sindrian_diktat,TOffAccTextSuitedPart1,$faction.id == sindrian_diktat,,"""嗯，看来我们关注你有一段时间了。这份情报摘要清楚地表明，你是一个合适的人选，可以加入辛达强权的编外特种舰队。
+
+作为编外特种舰队的一员加入我们光荣的斗争运动是一件严肃的事情。你必须对我们敬爱的领袖，最高元首 Andrada 同志，以及他所领导的辛达强权，承诺你坚定不移的忠诚。你将在星域中扫除腐朽的旧秩序，并为我们的人民开创一个新的时代。如果你幸运的话，你甚至能荣获为伟大事业献出生命的荣耀。特别是狮心统帅亲自向你下令时，你必须以最积极的行动践行我们的理念，保证完成任务。
+
+然后，从理论上说，你是可以随时离开 编外特种舰队 的。但我已经将热血奉献给了狮心，我希望你也能如此。""",,
+TOffAccTextSuitedPart2_sindrian_diktat,TOffAccTextSuitedPart2,$faction.id == sindrian_diktat,,"""下定决定了吗？向你所忠诚的 辛达强权 发誓！""",,
+TOffAccTextWelcomePart1_sindrian_diktat,TOffAccTextWelcomePart1,$faction.id == sindrian_diktat,,"""荣耀尽归辛达瑞亚之狮！你必将跨越纷争，铸就一个新的时代！""",,
+TOffAccTextWelcomePart2_sindrian_diktat,TOffAccTextWelcomePart2,$faction.id == sindrian_diktat,,"""现在你就是 辛达强权编外特种舰队 的一员了。相关的意识形态全息读本链接已经推送给了你的 TriPad。
+
+那么还有什么事吗，同志？""",,
+TOffAccTextChangeMind_sindrian_diktat,TOffAccTextChangeMind,$faction.id == sindrian_diktat,,"""的确，不是每个人都能有坚强的人格。作为 辛达强权编外特种舰队 的一员，就像无止尽地呆在相位空间里一样，这需要极端坚定的斗志。要知道，我们都是战士，为人类重归荣耀时代而战。最终决战将铸造强者，而其他渣滓则会被彻底清除，成为历史长河中微不足道的尘埃。
+
+如果你适合服役，那你就必须选择在最终决战里站在哪一边。认真考虑一下吧。""",,
+TOffAccResignAskToConfirm_sindrian_diktat,TOffAccResignAskToConfirm,$faction.id == sindrian_diktat,,"""我希望你知道这不是什么能开玩笑的事情。你应该很清楚，忠诚是 辛达强权 的最高思想。辛达瑞亚之狮不会容忍那些对我们的伟大运动缺乏坚定信念的人。""",,
+TOffAccResignConfirmed_sindrian_diktat,TOffAccResignConfirmed,$faction.id == sindrian_diktat,,"""我知道了，你没有足够的勇气与决心以这种方式协助我们的伟大事业。
+
+但是鉴于 辛达强权编外特种舰队 的特殊性质，我们并不会过度为难你。
+
+现在，离开我的通讯频道！""",,
+TOffAccResignCancelled_sindrian_diktat,TOffAccResignCancelled,$faction.id == sindrian_diktat,,"""谨慎前行，同志。
+
+虽然退出 辛达强权编外特种舰队 并非极为可耻的事。但我仍劝你三思而后行，放弃对我们伟大革命的支持也非光荣之事。""",,
+TOffAccDock_sindrian_diktat,MarketPostOpen,"$hasMarket
+!$player.transponderOn
+!$faction.c:allowsTransponderOffTrade
+$faction.TOffAcc_factionAllowPlayerTOff score:100
+$faction.id == sindrian_diktat","$tradeMode = OPEN 0
+FireBest MarketPostDock","你的$shipOrFleet进入了环绕 $marketName 的轨道。
+
+你并未开启应答器，但当地官员认出你的舰队隶属于 辛达强权编外特种舰队，于是当地官员麻利地为你办好了各项手续，顺便把你的入港顺位调到了最高优先级。",,
+greetingTOffSpecial_sindrian_diktat,OpenCommLink,"!$player.transponderOn
+$faction.TOffAcc_factionAllowPlayerTOff score:100
+$faction.id == sindrian_diktat",,"$PersonRank $personName 叹了一口气，对你说：""虽然我知道你们属于 辛达强权编外特种舰队，但是因为通讯规定，你还是打开应答器吧。""","turnOnTransponder:开启你的应答器
+cutCommLink:切断通讯链接",

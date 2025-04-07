@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="TransponderOffAccepted">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/jars/TransponderOffAccepted.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
